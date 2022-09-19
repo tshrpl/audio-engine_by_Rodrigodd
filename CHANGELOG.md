@@ -4,7 +4,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] - Unreleased
+# [0.4.2] - Unreleased
+
+### Changed
+
+- Updated `cpal` to 0.14.0
+
+### Added
+
+- Wasm: add `AudioEngine::resume`, for resuming the underlying AudioContext,
+  which can be in "suspended" state on Chrome.
+
+# [0.4.1] - 2022-08-18
+
+### Fixed
+
+- Android: work around crash when dropping `AudioEngine` due to unsoundness in oboe-rs.
+
+# [0.4.0] - 2022-07-31
+
+### Added
+
+- Make `Mixer` be public.
+- implement `SoundSource` for `Arc<Mutex<T>>`.
+- Add the `SineWave` `SoundSource`.
+- Add sound groups to AudioEngine:
+
+``` rust
+use audio_engine::{AudioEngine, WavDecoder};
+
+#[derive(Eq, Hash, PartialEq)]
+enum Group {
+    Effect,
+    Music,
+}
+
+let audio_engine = AudioEngine::with_groups::<Group>()?;
+let mut fx = audio_engine.new_sound_with_group(Group::Effect, my_fx)?;
+let mut music = audio_engine.new_sound_with_group(Group::Music, my_music)?;
+
+fx.play();
+music.play();
+
+// decrease music volume, for example
+audio_engine.set_group_volume(Group::Music, 0.1);
+```
+
+### Fixed
+
+- Fix `set_volume` don't working for more than one added sounds (#5).
+
+## [0.3.0] - 2022-07-03
 
 ### Changed
 
